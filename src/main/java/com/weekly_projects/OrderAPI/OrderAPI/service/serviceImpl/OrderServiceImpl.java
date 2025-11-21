@@ -7,6 +7,8 @@ import com.weekly_projects.OrderAPI.OrderAPI.repository.CustomerRepository;
 import com.weekly_projects.OrderAPI.OrderAPI.repository.OrderRepository;
 import com.weekly_projects.OrderAPI.OrderAPI.service.OrderService;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -14,19 +16,20 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class OrderServiceImpl implements OrderService {
 
     public final CustomerRepository customerRepository;
     private final OrderRepository orderRepository;
 
-    @Autowired
-    KafkaTemplate<String, Object> kafkaTemplate;
+    private final OrderCreatedEventProducer orderCreatedEventProducer;
 
-    @Autowired
-    public OrderServiceImpl(CustomerRepository customerRepository, OrderRepository orderRepository) {
-        this.customerRepository = customerRepository;
-        this.orderRepository = orderRepository;
-    }
+//    @Autowired
+//    public OrderServiceImpl(CustomerRepository customerRepository, OrderRepository orderRepository) {
+//        this.customerRepository = customerRepository;
+//        this.orderRepository = orderRepository;
+//    }
 
     @Override
     public Order findOrderById(long id) {
@@ -43,7 +46,8 @@ public class OrderServiceImpl implements OrderService {
         oce.setOrderId(order.getOrderId());
         oce.setOrderDate(order.getOrderDate());
         oce.setCustomer(order.getCustomer());
-        kafkaTemplate.send("OrderCreated", oce);
-        return orderRepository.save(order);
+        orderRepository.save(order);
+        orderCreatedEventProducer.sendOrderCreatedEvent(oce);
+        return order;
     }
 }
