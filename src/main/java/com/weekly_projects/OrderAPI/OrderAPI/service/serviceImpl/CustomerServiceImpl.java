@@ -1,22 +1,24 @@
 package com.weekly_projects.OrderAPI.OrderAPI.service.serviceImpl;
 
+import com.weekly_projects.OrderAPI.OrderAPI.event.CreatedCustomerEvent;
 import com.weekly_projects.OrderAPI.OrderAPI.model.Customer;
 import com.weekly_projects.OrderAPI.OrderAPI.repository.CustomerRepository;
 import com.weekly_projects.OrderAPI.OrderAPI.service.CustomerService;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class CustomerServiceImpl implements CustomerService {
 
     public final CustomerRepository customerRepository;
 
-    @Autowired
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
-    }
+    private final CustomerCreatedEventProducer customerCreatedEventProducer;
 
     public Customer findCustomerById(Long id) {
         return customerRepository.findById(id)
@@ -28,7 +30,12 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = new Customer();
         customer.setName(name);
         customer.setEmail(email);
-        return customerRepository.save(customer);
+        CreatedCustomerEvent cce = new CreatedCustomerEvent();
+        cce.setId(customer.getId());
+        cce.setName(customer.getName());
+        customerRepository.save(customer);
+        customerCreatedEventProducer.sendCustomerCreatedEvent(cce);
+        return customer;
     }
     @Override
     public Customer updateCustomer(Long id, String name, String email) {

@@ -25,11 +25,6 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderCreatedEventProducer orderCreatedEventProducer;
 
-//    @Autowired
-//    public OrderServiceImpl(CustomerRepository customerRepository, OrderRepository orderRepository) {
-//        this.customerRepository = customerRepository;
-//        this.orderRepository = orderRepository;
-//    }
 
     @Override
     public Order findOrderById(long id) {
