@@ -1,7 +1,9 @@
 package com.weekly_projects.OrderAPI.OrderAPI.controllers;
 
+import com.weekly_projects.OrderAPI.OrderAPI.dto.OrderDto;
 import com.weekly_projects.OrderAPI.OrderAPI.model.Order;
 import com.weekly_projects.OrderAPI.OrderAPI.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,9 +30,9 @@ public class OrderRest {
 
     //PostMapping: Create a new order
     @PostMapping("/{id}")
-    public ResponseEntity<Order> createOrder(@PathVariable long id) {
+    public ResponseEntity<Order> createOrder(@Valid @RequestBody OrderDto order) {
         return new ResponseEntity<>(
-                orderService.createOrder(id),
+                orderService.createOrder(order),
                 HttpStatus.CREATED
         );
     }

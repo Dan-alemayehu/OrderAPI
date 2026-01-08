@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.DateTimeException;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,7 +16,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long orderId;
     private LocalDateTime orderDate;
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 }

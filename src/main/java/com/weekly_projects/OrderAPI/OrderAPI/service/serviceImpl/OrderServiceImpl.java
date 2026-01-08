@@ -1,5 +1,6 @@
 package com.weekly_projects.OrderAPI.OrderAPI.service.serviceImpl;
 
+import com.weekly_projects.OrderAPI.OrderAPI.dto.OrderDto;
 import com.weekly_projects.OrderAPI.OrderAPI.event.CreatedOrderEvent;
 import com.weekly_projects.OrderAPI.OrderAPI.model.Customer;
 import com.weekly_projects.OrderAPI.OrderAPI.model.Order;
@@ -33,10 +34,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order createOrder(Long customerId) {
+    public Order createOrder(OrderDto orderDto) {
         Order order = new Order();
         order.setOrderDate(LocalDateTime.now());
-        order.setCustomer(customerRepository.findById(customerId).orElse(null));
+        order.setCustomer(customerRepository.findById(orderDto.getCustomerId()).orElse(null));
         CreatedOrderEvent oce = new CreatedOrderEvent();
         oce.setOrderId(order.getOrderId());
         oce.setOrderDate(order.getOrderDate());
