@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Service
@@ -36,7 +37,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order createOrder(OrderDto orderDto) {
         Order order = new Order();
-        order.setOrderDate(LocalDateTime.now());
+        order.setOrderDate(Instant.now());
         order.setCustomer(customerRepository.findById(orderDto.getCustomerId()).orElse(null));
         CreatedOrderEvent oce = new CreatedOrderEvent();
         oce.setOrderId(order.getOrderId());

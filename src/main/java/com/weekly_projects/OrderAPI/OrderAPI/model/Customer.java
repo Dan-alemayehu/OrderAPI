@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -17,4 +19,5 @@ public class Customer {
     private String name;
     @Column(nullable = false)
     private String email;
+    private Instant createdAt;
 }

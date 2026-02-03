@@ -1,5 +1,6 @@
 package com.weekly_projects.OrderAPI.OrderAPI.service.serviceImpl;
 
+import com.weekly_projects.OrderAPI.OrderAPI.dto.CustomerDto;
 import com.weekly_projects.OrderAPI.OrderAPI.event.CreatedCustomerEvent;
 import com.weekly_projects.OrderAPI.OrderAPI.model.Customer;
 import com.weekly_projects.OrderAPI.OrderAPI.repository.CustomerRepository;
@@ -10,7 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -26,14 +30,19 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer createCustomer(String name, String email) {
+    public Customer createCustomer(CustomerDto  customerDto) {
         Customer customer = new Customer();
-        customer.setName(name);
-        customer.setEmail(email);
-        CreatedCustomerEvent cce = new CreatedCustomerEvent();
-        cce.setId(customer.getId());
-        cce.setName(customer.getName());
+        customer.setName(customerDto.getName());
+        customer.setEmail(customerDto.getEmail());
+        customer.setCreatedAt(Instant.now());
         customerRepository.save(customer);
+        CreatedCustomerEvent cce = new CreatedCustomerEvent();
+        cce.setEventId(UUID.randomUUID().toString());
+        cce.setEventVersion(1);
+        cce.setOccurredAt(Instant.now());
+        cce.setCustomerId(customer.getId());
+        cce.setEmail(customer.getEmail());
+        cce.setName(customer.getName());
         customerCreatedEventProducer.sendCustomerCreatedEvent(cce);
         return customer;
     }
