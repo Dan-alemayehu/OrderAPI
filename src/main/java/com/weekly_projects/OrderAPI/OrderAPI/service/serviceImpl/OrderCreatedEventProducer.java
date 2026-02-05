@@ -5,6 +5,7 @@ import com.weekly_projects.OrderAPI.OrderAPI.event.CreatedOrderEvent;
 import com.weekly_projects.OrderAPI.OrderAPI.model.Order;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -12,18 +13,20 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class OrderCreatedEventProducer {
 
-    private static final String TOPIC = KafkaTopicConfig.ORDER_CREATED_TOPIC;
+    private final String topic;
 
     private final KafkaTemplate<String, CreatedOrderEvent> kafkaTemplate;
 
     @Autowired
-    public OrderCreatedEventProducer(KafkaTemplate<String, CreatedOrderEvent> kafkaTemplate) {
+    public OrderCreatedEventProducer(KafkaTemplate<String, CreatedOrderEvent> kafkaTemplate,
+                                     @Value("${app.kafka.topics.order-created}") String topic) {
         this.kafkaTemplate = kafkaTemplate;
+        this.topic = topic;
     }
 
     public void sendOrderCreatedEvent(CreatedOrderEvent order) {
 
-        kafkaTemplate.send(TOPIC, order)
+        kafkaTemplate.send(topic, order)
                 .whenComplete((result, error) -> {
                     if (error == null) {
                         log.info("Kafka publish succeeded: topic={}, partition={}, offset={}",
