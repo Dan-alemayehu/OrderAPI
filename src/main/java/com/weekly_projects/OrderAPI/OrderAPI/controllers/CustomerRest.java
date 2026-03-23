@@ -1,5 +1,6 @@
 package com.weekly_projects.OrderAPI.OrderAPI.controllers;
 
+import com.weekly_projects.OrderAPI.OrderAPI.dto.CustomerDto;
 import com.weekly_projects.OrderAPI.OrderAPI.model.Customer;
 import com.weekly_projects.OrderAPI.OrderAPI.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +28,9 @@ public class CustomerRest {
     }
 
     //Post Mapping: Create a new customer
-    @PostMapping("/{name}/{email}")
-    public ResponseEntity<Customer> createCustomer(@PathVariable String name, @PathVariable String email) {
-        return new ResponseEntity<>(
-                customerService.createCustomer(name, email),
-                HttpStatus.CREATED
-        );
+    @PostMapping
+    public ResponseEntity<Customer> createCustomer(@RequestBody CustomerDto customer) {
+        return ResponseEntity.ok(customerService.createCustomer(customer));
     }
 
     //Put Mapping: Update an existing customer
