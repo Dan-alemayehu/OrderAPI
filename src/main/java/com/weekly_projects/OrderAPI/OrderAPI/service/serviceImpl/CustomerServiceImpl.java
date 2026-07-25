@@ -47,12 +47,20 @@ public class CustomerServiceImpl implements CustomerService {
         return customer;
     }
     @Override
-    public Customer updateCustomer(Long id, String name, String email) {
-        Customer existingCustomer = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found with id " + id));
-        existingCustomer.setName(name);
-        existingCustomer.setEmail(email);
+    public Customer updateCustomer(CustomerDto customerDto) {
+        Customer existingCustomer = customerRepository.findById(customerDto.getId())
+                        .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
+        existingCustomer.setName(customerDto.getName());
+        existingCustomer.setEmail(customerDto.getEmail());
         Customer updatedCustomer = customerRepository.save(existingCustomer);
+        CreatedCustomerEvent cce = new CreatedCustomerEvent();
+        cce.setEventId(UUID.randomUUID().toString());
+        cce.setEventVersion(1);
+        cce.setOccurredAt(Instant.now());
+        cce.setCustomerId(updatedCustomer.getId());
+        cce.setEmail(updatedCustomer.getEmail());
+        cce.setName(updatedCustomer.getName());
+        customerCreatedEventProducer.sendCustomerCreatedEvent(cce);
         return updatedCustomer;
     }
     @Override

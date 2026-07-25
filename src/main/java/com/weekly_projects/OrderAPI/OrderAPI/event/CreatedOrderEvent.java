@@ -9,10 +9,12 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class CreatedOrderEvent {
+    private String eventId;
+    private int eventVersion;
+    private Instant occurredAt;
+
     private Long orderId;
     private Instant orderDate;
-    private Customer customer;
+    private Long customerId;
 }

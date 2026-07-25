@@ -34,10 +34,9 @@ public class CustomerRest {
     }
 
     //Put Mapping: Update an existing customer
-    @PostMapping("/{id}/{name}/{email}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, @PathVariable String name, @PathVariable String email) {
-        Customer updatedCustomer = customerService.updateCustomer(id, name, email);
-        return ResponseEntity.ok(updatedCustomer);
+    @PutMapping
+    public ResponseEntity<Customer> updateCustomer(@RequestBody CustomerDto customer) {
+        return ResponseEntity.ok(customerService.updateCustomer(customer));
     }
 
     //Delete Mapping: Delete an existing customer

@@ -8,8 +8,8 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 public class KafkaTopicConfig {
 
-    public static final String ORDER_CREATED_TOPIC = "OrderCreated";
-    public static final String CUSTOMER_CREATED_TOPIC = "CustomerCreated";
+    public static final String ORDER_CREATED_TOPIC = "order-created";
+    public static final String CUSTOMER_CREATED_TOPIC = "customer-created";
 
     @Bean
     public NewTopic orderCreatedTopic() {

@@ -29,7 +29,7 @@ public class OrderRest {
     }
 
     //PostMapping: Create a new order
-    @PostMapping("/{id}")
+    @PostMapping
     public ResponseEntity<Order> createOrder(@Valid @RequestBody OrderDto order) {
         return new ResponseEntity<>(
                 orderService.createOrder(order),

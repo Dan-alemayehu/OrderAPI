@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -39,11 +40,14 @@ public class OrderServiceImpl implements OrderService {
         Order order = new Order();
         order.setOrderDate(Instant.now());
         order.setCustomer(customerRepository.findById(orderDto.getCustomerId()).orElse(null));
+        orderRepository.save(order);
         CreatedOrderEvent oce = new CreatedOrderEvent();
+        oce.setEventId(UUID.randomUUID().toString());
+        oce.setEventVersion(1);
+        oce.setOccurredAt(Instant.now());
         oce.setOrderId(order.getOrderId());
         oce.setOrderDate(order.getOrderDate());
-        oce.setCustomer(order.getCustomer());
-        orderRepository.save(order);
+        oce.setCustomerId(order.getCustomer().getId());
         orderCreatedEventProducer.sendOrderCreatedEvent(oce);
         return order;
     }
