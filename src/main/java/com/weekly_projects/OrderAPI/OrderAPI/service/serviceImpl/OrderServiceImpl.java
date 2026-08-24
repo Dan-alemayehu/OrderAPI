@@ -39,7 +39,12 @@ public class OrderServiceImpl implements OrderService {
     public Order createOrder(OrderDto orderDto) {
         Order order = new Order();
         order.setOrderDate(Instant.now());
-        order.setCustomer(customerRepository.findById(orderDto.getCustomerId()).orElse(null));
+        Customer customer = customerRepository.findById(orderDto.getCustomerId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Customer with id " + orderDto.getCustomerId() + " not found"
+                ));
+
+        order.setCustomer(customer);
         orderRepository.save(order);
         CreatedOrderEvent oce = new CreatedOrderEvent();
         oce.setEventId(UUID.randomUUID().toString());
